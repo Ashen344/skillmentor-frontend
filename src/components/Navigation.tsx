@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router";
-import { useAuth, SignInButton, UserButton } from "@clerk/clerk-react";
+import { useAuth, SignInButton, UserButton, useUser } from "@clerk/clerk-react";
 import SkillMentorLogo from "@/assets/logo.webp";
 import { Menu } from "lucide-react";
 import { useState } from "react";
@@ -9,7 +9,12 @@ import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 
 export function Navigation() {
   const { isSignedIn } = useAuth();
+  const { user } = useUser();
   const [isOpen, setIsOpen] = useState(false);
+
+  // Check if the logged-in user has the admin role set in Clerk publicMetadata
+  const role = (user?.publicMetadata as { role?: string | string[] })?.role;
+const isAdmin = role === "admin" || (Array.isArray(role) && role.some(r => r.toLowerCase() === "admin"));
 
   const NavItems = ({ mobile = false }: { mobile?: boolean }) => (
     <nav
@@ -60,6 +65,18 @@ export function Navigation() {
               Dashboard
             </Button>
           </Link>
+          {/* Show Admin link only for users with the admin role */}
+          {isAdmin && (
+            <Link
+              to="/admin"
+              className={cn(mobile && "w-full")}
+              onClick={() => mobile && setIsOpen(false)}
+            >
+              <Button variant="ghost" className={cn(mobile && "w-full")}>
+                Admin
+              </Button>
+            </Link>
+          )}
           <div
             className={cn(
               "flex items-center",
@@ -159,11 +176,9 @@ export function Navigation() {
                     <span className="font-semibold text-lg">SkillMentor</span>
                   </Link>
                 </div>
-
                 <div className="space-y-6 flex-1">
                   <NavItems mobile />
                 </div>
-
                 <div className="pt-6 border-t border-white/10">
                   <AuthButtons mobile />
                 </div>
