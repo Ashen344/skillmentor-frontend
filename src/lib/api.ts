@@ -1,7 +1,7 @@
 import type { Enrollment, Mentor, MentorProfile, Review } from "@/types";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://https://skillmentor-frontend-tau.vercel.app/:8081";
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8081";
 
 // Shared helper — adds the auth token to every request
 async function fetchWithAuth(
